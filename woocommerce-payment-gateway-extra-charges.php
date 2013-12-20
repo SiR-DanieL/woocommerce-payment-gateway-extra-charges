@@ -38,6 +38,8 @@ function wc_pgec_init() {
     if( !isset( $woocommerce ) ) { return; }
 
     require_once( 'classes/class.wc-pgec.php' );
+
+    new WooCommerce_Payment_Gateway_Extra_Charges();
 }
 
 function wc_gpec_debug() {

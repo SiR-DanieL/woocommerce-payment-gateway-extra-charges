@@ -27,16 +27,11 @@
  */
 
 if( !class_exists( 'WooCommerce_Payment_Gateway_Extra_Charges' ) ) :
-class WooCommerce_Payment_Gateway_Extra_Charges extends WC_Payment_Gateway {
+class WooCommerce_Payment_Gateway_Extra_Charges {
     /**
      * @var array
      */
     public $gateways;
-
-    /**
-     * @var array
-     */
-    public $gateways_value;
 
     /**
      * Constructor
@@ -44,30 +39,14 @@ class WooCommerce_Payment_Gateway_Extra_Charges extends WC_Payment_Gateway {
      * @param string $id Order id
      */
     public function __construct() {
-        global $woocommerce;
-
         //Load plugin languages
         load_plugin_textdomain( 'wc_pgec', false, dirname( plugin_basename( __FILE__ ) ) );
-
-        $this->gateways = $woocommerce->payment_gateways->payment_gateways();
-
-        if( !get_option( 'wc_pgec_gateways' ) ) {
-            $this->gateways_value = array();
-
-            foreach( $this->gateways as $gateway ) {
-                $this->gateways_value[$gateway->id] = array(
-                    'amount' =>  0,
-                    'type'   => 'fixed'
-                );
-            }
-
-            update_option( 'wc_pgec_gateways', maybe_serialize( $this->gateways_value ) );
-        } else {
-            $this->gateways_value = get_option( 'wc_pgec_gateways' );
-        }
-
         //Hooks & Filters
         add_action( 'admin_head', array( $this, 'manage_form_fields' ) );
+
+        global $woocommerce;
+
+        $this->gateways = $woocommerce->payment_gateways->payment_gateways();
     }
 
     /**
@@ -76,11 +55,11 @@ class WooCommerce_Payment_Gateway_Extra_Charges extends WC_Payment_Gateway {
      * @return string
      */
     public function manage_form_fields() {
-        $current_tab        = ( empty( $_GET['tab'] ) ) ? '' : sanitize_text_field( urldecode( $_GET['tab'] ) );
-        $current_section    = ( empty( $_REQUEST['section'] ) ) ? '' : sanitize_text_field( urldecode( $_REQUEST['section'] ) );
-
-        $charge_amount  = 0.00;
-        $charge_type    = 'fixed';
+        $current_tab        = empty( $_GET['tab'] )         ? '' : sanitize_text_field( urldecode( $_GET['tab'] ) );
+        $current_section    = empty( $_REQUEST['section'] ) ? '' : sanitize_text_field( urldecode( $_REQUEST['section'] ) );
+        $current_gateway    = '';
+        $charge_amount      = 0.00;
+        $charge_type        = 'fixed';
 
         if( $current_tab == 'payment_gateways' && $current_section != '' ) {
             foreach( $this->gateways as $gateway ) {
@@ -133,12 +112,9 @@ class WooCommerce_Payment_Gateway_Extra_Charges extends WC_Payment_Gateway {
         $html = str_replace( "'", '"', $html );
         ?>
         <script>
-        jQuery( document).ready( function( $ ) {
-            $( '.form-table:last').after( '<?php echo $html ?>' );
-        })
+        jQuery( document ).ready( function( $ ) { $( '.form-table:last').after( '<?php echo $html ?>' ); } );
         </script>
         <?php
     }
 }
 endif;
-new WooCommerce_Payment_Gateway_Extra_Charges();
