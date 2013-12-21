@@ -45,8 +45,8 @@ function wc_pgec_init() {
 function wc_gpec_debug() {
     $values = func_get_args();
 
-    for( $i = 0; $i <= count( $value ); $i++ ) {
-        echo '<pre>Param ' . $i;
+    for( $i = 0; $i < count( $values ); $i++ ) {
+        echo '<pre>Param ' . $i . ': ';
         var_dump( $values[$i] );
         echo '</pre>';
     }
