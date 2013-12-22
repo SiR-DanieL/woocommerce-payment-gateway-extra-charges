@@ -74,7 +74,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
      * @param string $id Order id
      */
     public function __construct() {
-        global $woocommerce;
+        global $woocommerce, $pagenow;
 
         $this->version                      = '1.0';
         $this->suffix                       = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
@@ -95,13 +95,13 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
         add_action( 'wp_footer' ,                               array( $this, 'print_inline_checkout_js' ) );
 
         if( is_admin() ) {
-            global $pagenow;
-
             add_action( 'admin_head',                                    array( $this, 'manage_form_fields' ) );
             add_action( 'woocommerce_admin_order_totals_after_shipping', array( $this, 'add_order_write_panel_row' ) );
             add_action( 'woocommerce_process_shop_order_meta',           array( $this, 'update_shop_order_meta' ), 10, 2 );
 
+            //Add this hook only in post.php in the admin. The file enqueued needs a WooCommerce file that is loaded only in this page
             if( $pagenow == 'post.php' && $_GET['action'] == 'edit' ) {
+                //This file overwrite a function of WooCommerce. If there are problems after an update, try to remove it.
                 add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
             }
         }

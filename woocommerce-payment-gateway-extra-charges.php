@@ -42,6 +42,16 @@ function wc_pgec_init() {
     new WooCommerce_Payment_Gateway_Extra_Charges();
 }
 
+add_filter( 'plugin_action_links', 'wc_pgec_add_donate_link', 10, 4 );
+function wc_pgec_add_donate_link( $links, $file ) {
+    if( $file == plugin_basename( __FILE__ ) ) {
+        $donate_link = '<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5WZ8C3SQQBFN4" title="' . __( 'Donate', 'wc_pgec' ) . '" target="_blank">' . __( 'Donate', 'wc_pgec' ) . '</a>';
+        array_unshift( $links, $donate_link );
+    }
+
+    return $links;
+}
+
 function wc_pgec_debug() {
     $values = func_get_args();
 

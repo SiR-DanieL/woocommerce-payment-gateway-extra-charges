@@ -1,8 +1,7 @@
 # WooCommerce Payment Gateway Extra Charges
 
 WooCommerce Payment Gateway Extra Charges is a WordPress plugin.
-
-It needs WooCommerce plugin to work and it allows to add extra charges to your payment gateways. It's useful for COD payment gateway, in example, since WooCommerce does not allow this by default.
+This extension will add an extra field in each WooCommerce Payment Gateway that will allow you to add extra charges to your gateways. It's useful for COD payment gateway, in example, since WooCommerce does not allow this by default.
 
 ## Installation
 
