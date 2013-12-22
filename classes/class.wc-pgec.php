@@ -221,7 +221,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
     public function add_order_review_row(){
         ?>
         <tr class="payment-extra-charge">
-            <th><?php printf( __( '%s Extra Charges', 'wc_pgec' ), $this->current_gateway->title ) ?></th>
+            <th><?php printf( _x( '%s Extra Charge', '%s is the payment gateway choosen', 'wc_pgec' ), $this->current_gateway->title ) ?></th>
             <td>
             <?php if( $this->current_extra_charge_type == 'percentage' ) {
                 printf( _x( '%1$s (%2$.2f&#37;)', 'value of the extra charge in order review ( ie: 10,50€ (5%) )', 'wc_pgec' ), woocommerce_price( $this->current_extra_charge_amount ), get_option( $this->get_option_id( $this->current_gateway->id, 'amount' ) ) ) ;
@@ -262,7 +262,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
         $last_element = array_pop( $total_rows );
 
         $total_rows['extra_charge'] = array(
-            'label' => __( 'Extra Charge:', 'wc_pgec' ),
+            'label' => __( 'Extra Charge', 'wc_pgec' ) . ':',
             'value' => woocommerce_price( get_post_meta( $wc_order->id, '_extra-charge', true ) )
         );
 
