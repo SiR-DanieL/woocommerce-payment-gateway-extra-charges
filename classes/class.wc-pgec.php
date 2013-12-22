@@ -91,6 +91,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
         //Hooks & Filters
         add_action( 'woocommerce_calculate_totals',             array( $this, 'calculate_order_totals' ) );
         add_action( 'woocommerce_checkout_update_order_meta',   array( $this, 'update_order_meta' ) );
+        add_action( 'woocommerce_get_order_item_totals',        array( $this, 'add_emails_row' ), 10, 2 );
         add_action( 'wp_footer' ,                               array( $this, 'print_inline_checkout_js' ) );
 
         if( is_admin() ) {
@@ -248,6 +249,26 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
             </li>
         </ul>
         <?php
+    }
+
+    /**
+     * Add extra charge row to the emails
+     *
+     * @param $total_rows
+     * @param $wc_order
+     * @return array
+     */
+    public function add_emails_row( $total_rows, $wc_order ) {
+        $last_element = array_pop( $total_rows );
+
+        $total_rows['extra_charge'] = array(
+            'label' => __( 'Extra Charge:', 'wc_pgec' ),
+            'value' => woocommerce_price( get_post_meta( $wc_order->id, '_extra-charge', true ) )
+        );
+
+        $total_rows[] = $last_element;
+
+        return $last_element;
     }
 
     /**
