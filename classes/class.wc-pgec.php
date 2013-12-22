@@ -95,10 +95,15 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
         add_action( 'wp_footer' ,                               array( $this, 'print_inline_checkout_js' ) );
 
         if( is_admin() ) {
+            global $pagenow;
+
             add_action( 'admin_head',                                    array( $this, 'manage_form_fields' ) );
-            add_action( 'admin_enqueue_scripts',                         array( $this, 'enqueue_scripts' ) );
             add_action( 'woocommerce_admin_order_totals_after_shipping', array( $this, 'add_order_write_panel_row' ) );
             add_action( 'woocommerce_process_shop_order_meta',           array( $this, 'update_shop_order_meta' ), 10, 2 );
+
+            if( $pagenow == 'post.php' && $_GET['action'] == 'edit' ) {
+                add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+            }
         }
     }
 
@@ -130,7 +135,6 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
                     $charge_type   = get_option( $this->get_option_id( $current_gateway, 'type' ) );
                 }
             }
-
 
             ob_start() ?>
             <h4><?php _e( 'Extra charge for this payment method', 'wc_pgec' ) ?></h4>
@@ -243,12 +247,17 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
     public function add_order_write_panel_row( $order_id ) {
         $extra_charge = get_post_meta( $order_id, '_extra-charge', true );
         ?>
-        <h4><?php _e( 'Extra Charge', 'wc_pgec' ); ?></h4>
-        <ul class="totals">
-            <li class="wide">
-                <input type="number" step="0.01" min="0" id="_extra-charge" name="_extra-charge" placeholder="0.00" value="<?php echo esc_attr( $extra_charge ) ?>" class="calculated" />
-            </li>
-        </ul>
+            <div class="clear"></div>
+        </div>
+        <!-- close previous div, due to the hook from WooCommerce -->
+        <div class="totals_group">
+            <h4><?php _e( 'Extra Charge', 'wc_pgec' ); ?></h4>
+            <ul class="totals">
+                <li class="wide">
+                    <label><?php _e( 'Extra charge', 'wc_pgec' )?>:</label>
+                    <input type="number" step="0.01" min="0" id="_extra-charge" name="_extra-charge" placeholder="0.00" value="<?php echo esc_attr( number_format( $extra_charge, 2 ) ) ?>" class="calculated" />
+                </li>
+            </ul>
         <?php
     }
 
@@ -284,23 +293,6 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
     }
 
     /**
-     * Enqueue JavaScript files
-     */
-    public function enqueue_scripts() {
-        wp_enqueue_script( 'wc-pgec-write-panels', $this->plugin_url() . '/assets/js/write-panels' . $this->suffix . '.js', array( 'woocommerce_writepanel' ), $this->version, true );
-    }
-
-    /**
-     * Print checkout payment method form hanlder
-     */
-    public function print_inline_checkout_js() {
-        if( !is_checkout() ) return;
-
-        global $woocommerce;
-        $woocommerce->add_inline_js( "$(document.body).on('change', 'input[name=\"payment_method\"]', function() { $('body').trigger('update_checkout'); });" );
-    }
-
-    /**
      * Save order extra charge into the database
      *
      * @param $order_id
@@ -323,6 +315,23 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
         }
 
         return false;
+    }
+
+    /**
+     * Enqueue JavaScript files
+     */
+    public function enqueue_scripts() {
+        wp_enqueue_script( 'wc-pgec-write-panels', $this->plugin_url() . '/assets/js/write-panels' . $this->suffix . '.js', array( 'woocommerce_writepanel' ), $this->version, true );
+    }
+
+    /**
+     * Print checkout payment method form hanlder
+     */
+    public function print_inline_checkout_js() {
+        if( !is_checkout() ) return;
+
+        global $woocommerce;
+        $woocommerce->add_inline_js( "$(document.body).on('change', 'input[name=\"payment_method\"]', function() { $('body').trigger('update_checkout'); });" );
     }
 
     /**
