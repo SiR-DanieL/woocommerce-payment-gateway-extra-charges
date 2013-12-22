@@ -98,7 +98,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
             add_action( 'admin_head',                                    array( $this, 'manage_form_fields' ) );
             add_action( 'admin_enqueue_scripts',                         array( $this, 'enqueue_scripts' ) );
             add_action( 'woocommerce_admin_order_totals_after_shipping', array( $this, 'add_order_write_panel_row' ) );
-            add_action( 'woocommerce_process_shop_order_meta',           array( $this, 'update_shop_order_meta' ) );
+            add_action( 'woocommerce_process_shop_order_meta',           array( $this, 'update_shop_order_meta' ), 10, 2 );
         }
     }
 
@@ -219,6 +219,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
      * @return void
      */
     public function add_order_review_row(){
+        if( $this->current_extra_charge_amount <= 0 ) { return; }
         ?>
         <tr class="payment-extra-charge">
             <th><?php printf( _x( '%s Extra Charge', '%s is the payment gateway choosen', 'wc_pgec' ), $this->current_gateway->title ) ?></th>
@@ -268,7 +269,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
 
         $total_rows[] = $last_element;
 
-        return $last_element;
+        return $total_rows;
     }
 
     /**
