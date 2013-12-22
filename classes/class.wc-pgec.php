@@ -29,6 +29,26 @@
 if( !class_exists( 'WooCommerce_Payment_Gateway_Extra_Charges' ) ) :
 class WooCommerce_Payment_Gateway_Extra_Charges {
     /**
+     * @var string
+     */
+    public $version;
+
+    /**
+     * @var string
+     */
+    public $suffix;
+
+    /**
+     * @var string
+     */
+    public $plugin_url;
+
+    /**
+     * @var string
+     */
+    public $plugin_path;
+
+    /**
      * @var array
      */
     public $gateways;
@@ -54,21 +74,31 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
      * @param string $id Order id
      */
     public function __construct() {
-        //Load plugin languages
-        load_plugin_textdomain( 'wc_pgec', false, dirname( plugin_basename( __FILE__ ) ) );
-        //Hooks & Filters
-        add_action( 'admin_head', array( $this, 'manage_form_fields' ) );
-        add_action( 'woocommerce_calculate_totals', array( $this, 'calculate_order_totals' ) );
-        add_action( 'woocommerce_checkout_update_order_meta', array( $this, 'update_order_meta' ) );
-
         global $woocommerce;
 
+        $this->version                      = '1.0';
+        $this->suffix                       = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+        $this->plugin_url                   = $this->plugin_url();
+        $this->plugin_path                  = $this->plugin_path();
         $this->gateways                     = $woocommerce->payment_gateways->payment_gateways();
         $this->current_gateway              = null;
         $this->current_extra_charge_type    = '';
         $this->current_extra_charge_amount  = 0;
 
-        add_action( 'wp_footer' , array( $this, 'print_inline_checkout_js' ) );
+        //Load plugin languages
+        load_plugin_textdomain( 'wc_pgec', false, dirname( plugin_basename( __FILE__ ) ) );
+
+        //Hooks & Filters
+        add_action( 'woocommerce_calculate_totals',             array( $this, 'calculate_order_totals' ) );
+        add_action( 'woocommerce_checkout_update_order_meta',   array( $this, 'update_order_meta' ) );
+        add_action( 'wp_footer' ,                               array( $this, 'print_inline_checkout_js' ) );
+
+        if( is_admin() ) {
+            add_action( 'admin_head',                                    array( $this, 'manage_form_fields' ) );
+            add_action( 'admin_enqueue_scripts',                         array( $this, 'enqueue_scripts' ) );
+            add_action( 'woocommerce_admin_order_totals_after_shipping', array( $this, 'add_order_write_panel_row' ) );
+            add_action( 'woocommerce_process_shop_order_meta',           array( $this, 'update_shop_order_meta' ) );
+        }
     }
 
     /**
@@ -79,7 +109,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
     public function manage_form_fields() {
         global $woocommerce;
 
-        $current_tab        = !isset( $_GET['tab'] ) || empty( $_GET['tab'] )         ? '' : sanitize_text_field( urldecode( $_GET['tab'] ) );
+        $current_tab        = !isset( $_GET['tab'] )     || empty( $_GET['tab'] )     ? '' : sanitize_text_field( urldecode( $_GET['tab'] ) );
         $current_section    = !isset( $_GET['section'] ) || empty( $_GET['section'] ) ? '' : sanitize_text_field( urldecode( $_GET['section'] ) );
         $current_gateway    = '';
         $charge_amount      = 0.00;
@@ -173,7 +203,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
 
             $totals->cart_contents_total += $extra_charge_amount;
 
-            $this->current_gateway             = $current_gateway;
+            $this->current_gateway             = $current_gateway; //Note: this is an object
             $this->current_extra_charge_amount = $extra_charge_amount;
             $this->current_extra_charge_type   = $extra_charge_type;
 
@@ -193,13 +223,30 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
             <th><?php printf( __( '%s Extra Charges', 'wc_pgec' ), $this->current_gateway->title ) ?></th>
             <td>
             <?php if( $this->current_extra_charge_type == 'percentage' ) {
-                printf( _x( '%1$s (%2$s&#37;)', 'value of the extra charge in order review', 'wc_pgec' ), woocommerce_price( $this->current_extra_charge_amount ), get_option( $this->get_option_id( $this->current_gateway->id, 'amount' ) ) ) ;
+                printf( _x( '%1$s (%2$.2f&#37;)', 'value of the extra charge in order review ( ie: 10,50€ (5%) )', 'wc_pgec' ), woocommerce_price( $this->current_extra_charge_amount ), get_option( $this->get_option_id( $this->current_gateway->id, 'amount' ) ) ) ;
             } else {
                 echo woocommerce_price( $this->current_extra_charge_amount );
             }
             ?>
             </td>
         </tr>
+        <?php
+    }
+
+    /**
+     * Add a box on the right of the order detail admin page to handle the extra charge of the order
+     *
+     * @param $order_id
+     */
+    public function add_order_write_panel_row( $order_id ) {
+        $extra_charge = get_post_meta( $order_id, '_extra-charge', true );
+        ?>
+        <h4><?php _e( 'Extra Charge', 'wc_pgec' ); ?></h4>
+        <ul class="totals">
+            <li class="wide">
+                <input type="number" step="0.01" min="0" id="_extra-charge" name="_extra-charge" placeholder="0.00" value="<?php echo esc_attr( $extra_charge ) ?>" class="calculated" />
+            </li>
+        </ul>
         <?php
     }
 
@@ -215,7 +262,14 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
     }
 
     /**
-     * Prints checkout payment method form hanlder
+     * Enqueue JavaScript files
+     */
+    public function enqueue_scripts() {
+        wp_enqueue_script( 'wc-pgec-write-panels', $this->plugin_url() . '/assets/js/write-panels' . $this->suffix . '.js', array( 'woocommerce_writepanel' ), $this->version, true );
+    }
+
+    /**
+     * Print checkout payment method form hanlder
      */
     public function print_inline_checkout_js() {
         if( !is_checkout() ) return;
@@ -228,9 +282,47 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
      * Save order extra charge into the database
      *
      * @param $order_id
+     * @return bool
      */
     public function update_order_meta( $order_id ) {
-        update_post_meta( $order_id, '_extra-charge', esc_attr( $this->current_extra_charge_amount ) );
+        return update_post_meta( $order_id, '_extra-charge', woocommerce_clean( $this->current_extra_charge_amount ) );
+    }
+
+    /**
+     * Update order extra charge when the order is saved in the admin
+     *
+     * @param $order_id
+     * @param $post
+     * @return bool
+     */
+    public function update_shop_order_meta( $order_id, $post ) {
+        if( isset( $_POST['_extra-charge'] ) ) {
+            return update_post_meta( $order_id, '_extra-charge', woocommerce_clean( $_POST['_extra-charge'] ) );
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the plugin url.
+     *
+     * @return string
+     */
+    public function plugin_url() {
+        if ( $this->plugin_url ) return $this->plugin_url;
+        return $this->plugin_url = untrailingslashit( plugins_url( '/', dirname( __FILE__ ) ) );
+    }
+
+
+    /**
+     * Get the plugin path.
+     *
+     * @return string
+     */
+    public function plugin_path() {
+        if ( $this->plugin_path ) return $this->plugin_path;
+
+        return $this->plugin_path = untrailingslashit( dirname( plugin_dir_path( __FILE__ ) ) );
     }
 }
 endif;
