@@ -27,9 +27,9 @@ This extension will add an extra field in each WooCommerce Payment Gateway that 
 == Changelog ==
 
 = 1.1 =
-* Tweak: The file write-panels.min.js was loaded wrongly also on other post types pages in the admin
-* Tweak: The plugin languages files are now loaded correctly from the folder /i18n/
-* Tweak: Minor changes
+* Fix: The file write-panels.min.js was loaded wrongly also on other post types pages in the admin
+* Fix: The plugin languages files are now loaded correctly from the folder /i18n/
+* Fix: Minor changes
 
 = 1.0 =
 * First release
