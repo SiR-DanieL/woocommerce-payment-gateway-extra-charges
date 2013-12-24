@@ -1,29 +1,35 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce Payment Gateways Extra Charge\n"
+"Project-Id-Version: WooCommerce Payment Gateway Extra Charges v1.0\n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-12-22 02:44+0100\n"
-"PO-Revision-Date: 2013-12-22 02:45+0100\n"
+"PO-Revision-Date: 2013-12-24 13:46+0100\n"
 "Last-Translator: Nicola Mustone <mail@nicolamustone.it>\n"
 "Language-Team: Nicola Mustone <mustone.nicola@gmail.com>\n"
-"Language: it_IT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Poedit 1.6.3\n"
-"X-Poedit-Basepath: ../\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;_x:1,2c\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;"
+"_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2\n"
+"X-Poedit-Basepath: ../\n"
+"X-Textdomain-Support: yes\n"
+"Language: it_IT\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: woocommerce-payment-gateway-extra-charges.php:48
+# @ wc_pgec
+#: woocommerce-payment-gateway-extra-charges.php:53
 msgid "Donate"
 msgstr "Fai una donazione"
 
+# @ wc_pgec
 #: classes/class.wc-pgec.php:140
 msgid "Extra charge for this payment method"
 msgstr "Supplemento per questo metodo di pagamento"
 
+# @ wc_pgec
 #: classes/class.wc-pgec.php:141
 msgid ""
 "Optionally add extra charge fixed/percentage amount to this payment method."
@@ -31,38 +37,46 @@ msgstr ""
 "Aggiungi opzionalmente dei supplementi fissi/in percentuale a questo metodo "
 "di pagamento."
 
+# @ wc_pgec
 #: classes/class.wc-pgec.php:145 classes/class.wc-pgec.php:148
 msgid "Extra charge amount"
 msgstr "Ammontare supplemento"
 
+# @ wc_pgec
 #: classes/class.wc-pgec.php:154 classes/class.wc-pgec.php:157
 msgid "Extra charge type"
 msgstr "Tipo supplemento"
 
+# @ wc_pgec
 #: classes/class.wc-pgec.php:159
 msgid "Fixed amount"
 msgstr "Fisso"
 
+# @ wc_pgec
 #: classes/class.wc-pgec.php:160
 msgid "Percentage amount"
 msgstr "Percentuale"
 
+# @ wc_pgec
 #: classes/class.wc-pgec.php:229
 #, php-format
 msgctxt "%s is the payment gateway choosen"
 msgid "%s Extra Charge"
 msgstr "Supplemento %s"
 
+# @ wc_pgec
 #: classes/class.wc-pgec.php:232
 #, php-format
 msgctxt "value of the extra charge in order review ( ie: 10,50€ (5%) )"
 msgid "%1$s (%2$.2f&#37;)"
 msgstr "%1$s (%2$.2f&#37;)"
 
+# @ wc_pgec
 #: classes/class.wc-pgec.php:254 classes/class.wc-pgec.php:275
 msgid "Extra Charge"
 msgstr "Supplemento"
 
+# @ wc_pgec
 #: classes/class.wc-pgec.php:257
 msgid "Extra charge"
 msgstr "Supplemento"

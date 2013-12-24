@@ -1,11 +1,16 @@
 <?php
 /*
-Plugin Name: WooCommerce Payment Gateway Extra Charges
-Plugin URI: https://github.com/SiR-DanieL/woocommerce-payment-gateway-extra-charges
-Description: A WooCommerce Extension that allows to add extra charges to your payment gateways
-Version: 1.0
-Author: Nicola Mustone
-Author URI: http://nicolamustone.it
+Plugin Name:       WooCommerce Payment Gateway Extra Charges
+Plugin URI:        https://github.com/SiR-DanieL/woocommerce-payment-gateway-extra-charges
+Description:       A WooCommerce Extension that allows to add extra charges to your payment gateways
+Version:           1.0
+Author:            Nicola Mustone
+Author URI:        http://nicolamustone.it
+Textdomain:        wc_pgec
+Domain Path:       /i18n
+License:           GPL-2.0+
+License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+GitHub Plugin URI: https://github.com/SiR-DanieL/woocommerce-payment-gateway-extra-charges
 */
 
 /**
@@ -60,4 +65,27 @@ function wc_pgec_debug() {
         var_dump( $values[$i] );
         echo '</pre>';
     }
+}
+
+function get_current_post_type() {
+    global $post, $typenow, $current_screen;
+
+    //we have a post so we can just get the post type from that
+    if ( $post && $post->post_type )
+        return $post->post_type;
+
+    //check the global $typenow - set in admin.php
+    elseif( $typenow )
+        return $typenow;
+
+    //check the global $current_screen object - set in sceen.php
+    elseif( $current_screen && $current_screen->post_type )
+        return $current_screen->post_type;
+
+    //lastly check the post_type querystring
+    elseif( isset( $_REQUEST['post_type'] ) )
+        return sanitize_key( $_REQUEST['post_type'] );
+
+    //we do not know the post type!
+    return null;
 }

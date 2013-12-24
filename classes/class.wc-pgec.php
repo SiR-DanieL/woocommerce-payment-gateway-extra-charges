@@ -86,7 +86,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
         $this->current_extra_charge_amount  = 0;
 
         //Load plugin languages
-        load_plugin_textdomain( 'wc_pgec', false, dirname( plugin_basename( __FILE__ ) ) );
+        load_plugin_textdomain( 'wc_pgec', false, dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/i18n/' );
 
         //Hooks & Filters
         add_action( 'woocommerce_calculate_totals',             array( $this, 'calculate_order_totals' ) );
@@ -100,7 +100,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
             add_action( 'woocommerce_process_shop_order_meta',           array( $this, 'update_shop_order_meta' ), 10, 2 );
 
             //Add this hook only in post.php in the admin. The file enqueued needs a WooCommerce file that is loaded only in this page
-            if( $pagenow == 'post.php' && $_GET['action'] == 'edit' ) {
+            if( $pagenow == 'post.php' && $_GET['action'] == 'edit' && isset( $_GET['post'] ) && get_post_type( $_GET['post'] ) == 'shop_order' ) {
                 //This file overwrite a function of WooCommerce. If there are problems after an update, try to remove it.
                 add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
             }
