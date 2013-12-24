@@ -76,7 +76,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
     public function __construct() {
         global $woocommerce, $pagenow;
 
-        $this->version                      = '1.0';
+        $this->version                      = '1.1';
         $this->suffix                       = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
         $this->plugin_url                   = $this->plugin_url();
         $this->plugin_path                  = $this->plugin_path();
