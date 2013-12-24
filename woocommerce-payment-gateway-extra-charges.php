@@ -1,11 +1,16 @@
 <?php
 /*
-Plugin Name: WooCommerce Payment Gateway Extra Charges
-Plugin URI: https://github.com/SiR-DanieL/woocommerce-payment-gateway-extra-charges
-Description: A WooCommerce Extension that allows to add extra charges to your payment gateways
-Version: 1.0
-Author: Nicola Mustone
-Author URI: http://nicolamustone.it
+Plugin Name:       WooCommerce Payment Gateway Extra Charges
+Plugin URI:        https://github.com/SiR-DanieL/woocommerce-payment-gateway-extra-charges
+Description:       A WooCommerce Extension that allows to add extra charges to your payment gateways
+Version:           1.0
+Author:            Nicola Mustone
+Author URI:        http://nicolamustone.it
+Textdomain:        wc_pgec
+Domain Path:       /i18n
+License:           GPL-2.0+
+License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+GitHub Plugin URI: https://github.com/SiR-DanieL/woocommerce-payment-gateway-extra-charges
 */
 
 /**
