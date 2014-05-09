@@ -74,13 +74,13 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
      * @param string $id Order id
      */
     public function __construct() {
-        global $woocommerce, $pagenow;
+        global $pagenow;
 
         $this->version                      = '1.1';
         $this->suffix                       = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
         $this->plugin_url                   = $this->plugin_url();
         $this->plugin_path                  = $this->plugin_path();
-        $this->gateways                     = $woocommerce->payment_gateways->payment_gateways();
+        $this->gateways                     = WC()->payment_gateways->payment_gateways();
         $this->current_gateway              = null;
         $this->current_extra_charge_type    = '';
         $this->current_extra_charge_amount  = 0;
@@ -113,15 +113,13 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
      * @return string
      */
     public function manage_form_fields() {
-        global $woocommerce;
-
         $current_tab        = !isset( $_GET['tab'] )     || empty( $_GET['tab'] )     ? '' : sanitize_text_field( urldecode( $_GET['tab'] ) );
         $current_section    = !isset( $_GET['section'] ) || empty( $_GET['section'] ) ? '' : sanitize_text_field( urldecode( $_GET['section'] ) );
         $current_gateway    = '';
         $charge_amount      = 0.00;
         $charge_type        = 'fixed';
 
-        if( $current_tab == 'payment_gateways' && !empty( $current_section ) ) {
+        if( $current_tab == 'checkout' && !empty( $current_section ) ) {
             foreach( $this->gateways as $gateway ) {
                 if( get_class( $gateway ) == $current_section ) {
                     $current_gateway = $gateway->id;
@@ -170,7 +168,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
             $html = str_replace( array( "\r", "\n" ) , '', trim( $html ) );
             $html = str_replace( "'", '"', $html );
 
-            $woocommerce->add_inline_js( "$( '.form-table:last' ).after( '" . $html . "' );" );
+            wc_enqueue_js( "$( '.form-table:last' ).after( '" . $html . "' );" );
         }
     }
 
@@ -181,10 +179,8 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
      * return double
      */
     public function calculate_order_totals( $totals ) {
-        global $woocommerce;
-
-        $available_gateways = $woocommerce->payment_gateways->get_available_payment_gateways();
-        $current_gateway = $woocommerce->session->chosen_payment_method;
+        $available_gateways = WC()->payment_gateways->get_available_payment_gateways();
+        $current_gateway = WC()->session->chosen_payment_method;
 
         if( !empty( $available_gateways ) ) {
             //Get the current gateway
@@ -229,9 +225,9 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
             <th><?php printf( _x( '%s Extra Charge', '%s is the payment gateway choosen', 'wc_pgec' ), $this->current_gateway->title ) ?></th>
             <td>
             <?php if( $this->current_extra_charge_type == 'percentage' ) {
-                printf( _x( '%1$s (%2$.2f&#37;)', 'value of the extra charge in order review ( ie: 10,50€ (5%) )', 'wc_pgec' ), woocommerce_price( $this->current_extra_charge_amount ), get_option( $this->get_option_id( $this->current_gateway->id, 'amount' ) ) ) ;
+                printf( _x( '%1$s (%2$.2f&#37;)', 'value of the extra charge in order review ( ie: 10,50€ (5%) )', 'wc_pgec' ), wc_price( $this->current_extra_charge_amount ), get_option( $this->get_option_id( $this->current_gateway->id, 'amount' ) ) ) ;
             } else {
-                echo woocommerce_price( $this->current_extra_charge_amount );
+                echo wc_price( $this->current_extra_charge_amount );
             }
             ?>
             </td>
@@ -273,7 +269,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
 
         $total_rows['extra_charge'] = array(
             'label' => __( 'Extra Charge', 'wc_pgec' ) . ':',
-            'value' => woocommerce_price( get_post_meta( $wc_order->id, '_extra-charge', true ) )
+            'value' => wc_price( get_post_meta( $wc_order->id, '_extra-charge', true ) )
         );
 
         $total_rows[] = $last_element;
@@ -299,7 +295,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
      * @return bool
      */
     public function update_order_meta( $order_id ) {
-        return update_post_meta( $order_id, '_extra-charge', woocommerce_clean( $this->current_extra_charge_amount ) );
+        return update_post_meta( $order_id, '_extra-charge', wc_clean( $this->current_extra_charge_amount ) );
     }
 
     /**
@@ -311,7 +307,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
      */
     public function update_shop_order_meta( $order_id, $post ) {
         if( isset( $_POST['_extra-charge'] ) ) {
-            return update_post_meta( $order_id, '_extra-charge', woocommerce_clean( $_POST['_extra-charge'] ) );
+            return update_post_meta( $order_id, '_extra-charge', wc_clean( $_POST['_extra-charge'] ) );
         }
 
         return false;
@@ -330,8 +326,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
     public function print_inline_checkout_js() {
         if( !is_checkout() ) return;
 
-        global $woocommerce;
-        $woocommerce->add_inline_js( "$(document.body).on('change', 'input[name=\"payment_method\"]', function() { $('body').trigger('update_checkout'); });" );
+        wc_enqueue_js( "$(document.body).on('change', 'input[name=\"payment_method\"]', function() { $('body').trigger('update_checkout'); });" );
     }
 
     /**

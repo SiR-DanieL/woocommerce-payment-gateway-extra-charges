@@ -10,6 +10,10 @@ This extension will add an extra field in each WooCommerce Payment Gateway that 
 
 ## Changelog
 
+### 1.2
+* Fix: WordPress 3.9+ compatibility
+* Fix: WooCommerce 2+ compatibility
+
 ### 1.1
 * Tweak: Updated languages files
 * Fix: The file write-panels.min.js was loaded wrongly also on other post types pages in the admin

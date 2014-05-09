@@ -3,8 +3,8 @@ Contributors: nicolamustone
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5WZ8C3SQQBFN4
 Tags: woocommerce, fees, charges, payment, shipping, method, gateway
 Requires at least: 3.5
-Tested up to: 3.8
-Stable tag: 1.0
+Tested up to: 3.9.1
+Stable tag: 1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,6 +25,10 @@ This extension will add an extra field in each WooCommerce Payment Gateway that 
 2. Order detail admin page
 
 == Changelog ==
+
+= 1.2 =
+* Fix: WordPress 3.9+ compatibility
+* Fix: WooCommerce 2+ compatibility
 
 = 1.1 =
 * Tweak: Updated languages files
