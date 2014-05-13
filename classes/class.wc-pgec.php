@@ -121,7 +121,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
 
         if( $current_tab == 'checkout' && !empty( $current_section ) ) {
             foreach( $this->gateways as $gateway ) {
-                if( get_class( $gateway ) == $current_section ) {
+                if( strtolower( get_class( $gateway ) ) == $current_section ) {
                     $current_gateway = $gateway->id;
 
                     if( isset( $_REQUEST['save'] ) ) {

@@ -10,6 +10,9 @@ This extension will add an extra field in each WooCommerce Payment Gateway that 
 
 ## Changelog
 
+### 1.2.1
+* Fix: Checkout fields not saved correctly
+
 ### 1.2
 * Fix: WordPress 3.9+ compatibility
 * Fix: WooCommerce 2+ compatibility

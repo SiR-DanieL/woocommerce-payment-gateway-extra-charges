@@ -3,7 +3,7 @@
 Plugin Name:       WooCommerce Payment Gateway Extra Charges
 Plugin URI:        https://github.com/SiR-DanieL/woocommerce-payment-gateway-extra-charges
 Description:       A WooCommerce Extension that allows to add extra charges to your payment gateways
-Version:           1.2
+Version:           1.2.1
 Author:            Nicola Mustone
 Author URI:        http://nicolamustone.it
 Textdomain:        wc_pgec
