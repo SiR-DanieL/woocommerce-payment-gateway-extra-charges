@@ -76,14 +76,15 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
     public function __construct() {
         global $pagenow;
 
-        $this->version                      = '1.1';
-        $this->suffix                       = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-        $this->plugin_url                   = $this->plugin_url();
-        $this->plugin_path                  = $this->plugin_path();
-        $this->gateways                     = WC()->payment_gateways->payment_gateways();
-        $this->current_gateway              = null;
-        $this->current_extra_charge_type    = '';
-        $this->current_extra_charge_amount  = 0;
+        $this->version                              = '1.3';
+        $this->suffix                               = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+        $this->plugin_url                           = $this->plugin_url();
+        $this->plugin_path                          = $this->plugin_path();
+        $this->gateways                             = WC()->payment_gateways->payment_gateways();
+        $this->current_gateway                      = null;
+        $this->current_extra_charge_type            = '';
+        $this->current_extra_charge_amount          = 0;
+        $this->current_extra_charge_max_cart_value  = 0;
 
         //Load plugin languages
         load_plugin_textdomain( 'wc_pgec', false, dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/i18n/' );
@@ -118,6 +119,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
         $current_gateway    = '';
         $charge_amount      = 0.00;
         $charge_type        = 'fixed';
+        $max_cart_value     = 0.00;
 
         if( $current_tab == 'checkout' && !empty( $current_section ) ) {
             foreach( $this->gateways as $gateway ) {
@@ -127,10 +129,12 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
                     if( isset( $_REQUEST['save'] ) ) {
                         update_option( $this->get_option_id( $current_gateway, 'amount' ), $_REQUEST[ $this->get_option_id( $current_gateway, 'amount' ) ] );
                         update_option( $this->get_option_id( $current_gateway, 'type' ),   $_REQUEST[ $this->get_option_id( $current_gateway, 'type' ) ] );
+                        update_option( $this->get_option_id( $current_gateway, 'max_cart_value' ), $_REQUEST[ $this->get_option_id( $current_gateway, 'max_cart_value' ) ] );
                     }
 
-                    $charge_amount = get_option( $this->get_option_id( $current_gateway, 'amount' ) );
-                    $charge_type   = get_option( $this->get_option_id( $current_gateway, 'type' ) );
+                    $charge_amount  = get_option( $this->get_option_id( $current_gateway, 'amount' ) );
+                    $charge_type    = get_option( $this->get_option_id( $current_gateway, 'type' ) );
+                    $max_cart_value = get_option( $this->get_option_id( $current_gateway, 'max_cart_value' ) );
                 }
             }
 
@@ -157,6 +161,15 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
                                     <option value="fixed" <?php selected( $charge_type, 'fixed' ) ?>><?php _e( 'Fixed amount', 'wc_pgec' ) ?></option>
                                     <option value="percentage"<?php selected( $charge_type, 'percentage' ) ?>><?php _e( 'Percentage amount', 'wc_pgec' ) ?></option>
                                 </select>
+                            </fieldset>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row" class="titledesc"><label for="woocommerce_<?php echo $current_gateway ?>_extra_charge_max_cart_value"><?php _e( 'Maximum cart value for adding fee:', 'wc_pgec' ) ?></label></th>
+                        <td class="forminp">
+                            <fieldset>
+                                <legend class="screen-reader-text"><span><?php _e( 'Maximum cart value for adding fee:', 'wc_pgec' ) ?></span></legend>
+                                <input class="input-text regular-input " type="number" name="woocommerce_<?php echo $current_gateway ?>_extra_charge_max_cart_value" id="woocommerce_<?php echo $current_gateway ?>_extra_charge_max_cart_value" style="width:70px" value="<?php echo $max_cart_value ?>" placeholder="" min="0" step="0.01">
                             </fieldset>
                         </td>
                     </tr>
@@ -193,10 +206,12 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
             }
         }
 
+        $extra_charge_max_cart_value    = get_option( $this->get_option_id( $current_gateway->id, 'max_cart_value' ) );
+
         //Add charges to cart totals
-        if( !empty( $current_gateway ) ) {
-            $extra_charge_amount = get_option( $this->get_option_id( $current_gateway->id, 'amount' ) );
-            $extra_charge_type   = get_option( $this->get_option_id( $current_gateway->id, 'type' ) );
+        if( !empty( $current_gateway ) && !empty( $extra_charge_max_cart_value ) && $extra_charge_max_cart_value >= $totals->cart_contents_total ) {
+            $extra_charge_amount            = get_option( $this->get_option_id( $current_gateway->id, 'amount' ) );
+            $extra_charge_type              = get_option( $this->get_option_id( $current_gateway->id, 'type' ) );
 
             if( $extra_charge_type == 'percentage' ) {
                 $extra_charge_amount = round( $totals->cart_contents_total * $extra_charge_amount / 100 , 2 );
@@ -222,10 +237,10 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
         if( $this->current_extra_charge_amount <= 0 ) { return; }
         ?>
         <tr class="payment-extra-charge">
-            <th><?php printf( _x( '%s Extra Charge', '%s is the payment gateway choosen', 'wc_pgec' ), $this->current_gateway->title ) ?></th>
+            <th><?php printf( _x( '%s fee', '%s is the payment gateway choosen', 'wc_pgec' ), $this->current_gateway->title ) ?></th>
             <td>
             <?php if( $this->current_extra_charge_type == 'percentage' ) {
-                printf( _x( '%1$s (%2$.2f&#37;)', 'value of the extra charge in order review ( ie: 10,50€ (5%) )', 'wc_pgec' ), wc_price( $this->current_extra_charge_amount ), get_option( $this->get_option_id( $this->current_gateway->id, 'amount' ) ) ) ;
+                printf( _x( '%1$s (%2$.2f&#37;)', 'value of the fees in order review ( ie: 10,50€ (5%) )', 'wc_pgec' ), wc_price( $this->current_extra_charge_amount ), get_option( $this->get_option_id( $this->current_gateway->id, 'amount' ) ) ) ;
             } else {
                 echo wc_price( $this->current_extra_charge_amount );
             }
@@ -247,13 +262,14 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
         </div>
         <!-- close previous div, due to the hook from WooCommerce -->
         <div class="totals_group">
-            <h4><?php _e( 'Extra Charge', 'wc_pgec' ); ?></h4>
+            <h4><?php _e( 'Payment method fee', 'wc_pgec' ); ?></h4>
             <ul class="totals">
                 <li class="wide">
-                    <label><?php _e( 'Extra charge', 'wc_pgec' )?>:</label>
+                    <label><?php _e( 'Payment method fee', 'wc_pgec' )?>:</label>
                     <input type="number" step="0.01" min="0" id="_extra-charge" name="_extra-charge" placeholder="0.00" value="<?php echo esc_attr( number_format( $extra_charge, 2 ) ) ?>" class="calculated" />
                 </li>
             </ul>
+            <div class="clear"></div>
         <?php
     }
 
@@ -268,7 +284,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
         $last_element = array_pop( $total_rows );
 
         $total_rows['extra_charge'] = array(
-            'label' => __( 'Extra Charge', 'wc_pgec' ) . ':',
+            'label' => __( 'Payment method fee', 'wc_pgec' ) . ':',
             'value' => wc_price( get_post_meta( $wc_order->id, '_extra-charge', true ) )
         );
 
@@ -317,7 +333,7 @@ class WooCommerce_Payment_Gateway_Extra_Charges {
      * Enqueue JavaScript files
      */
     public function enqueue_scripts() {
-        wp_enqueue_script( 'wc-pgec-write-panels', $this->plugin_url() . '/assets/js/write-panels' . $this->suffix . '.js', array( 'woocommerce_writepanel' ), $this->version, true );
+        wp_enqueue_script( 'wc-pgec-write-panels', $this->plugin_url() . '/assets/js/write-panels' . $this->suffix . '.js', array( 'woocommerce_admin_meta_boxes' ), $this->version, true );
     }
 
     /**

@@ -10,6 +10,12 @@ This extension will add an extra field in each WooCommerce Payment Gateway that 
 
 ## Changelog
 
+### 1.3
+* Add: You can set the maximum cart value to which apply fees.
+* Tweak: Updated languages files
+* Tweak: No longer calling the fees "Extra charges", but "fees" or "Payment method fees".
+* Fix: Admin order page Javascript calculations now works properly. 
+
 ### 1.2.1
 * Fix: Checkout fields not saved correctly
 

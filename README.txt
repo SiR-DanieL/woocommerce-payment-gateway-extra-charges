@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: woocommerce, fees, charges, payment, shipping, method, gateway
 Requires at least: 3.5
 Tested up to: 3.9.1
-Stable tag: 1.2
+Stable tag: 1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,6 +25,12 @@ This extension will add an extra field in each WooCommerce Payment Gateway that 
 2. Order detail admin page
 
 == Changelog ==
+
+= 1.3 =
+* Add: You can set the maximum cart value to which apply fees.
+* Tweak: Updated languages files
+* Tweak: No longer calling the fees "Extra charges", but "fees" or "Payment method fees".
+* Fix: Admin order page Javascript calculations now works properly. 
 
 = 1.2.1 =
 * Fix: Checkout fields not saved correctly

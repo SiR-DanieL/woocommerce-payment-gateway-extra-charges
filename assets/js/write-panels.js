@@ -1,13 +1,11 @@
 jQuery( document ).ready( function( $ ) {
     $( 'button.calc_totals').unbind( 'click' );
 
-    console.log( $( 'button.calc_totals').unbind( 'click' ) );
-
     $( 'button.calc_totals').on( 'click', function() {
         // Block write panel
-        $('#woocommerce-order-totals').block({ message: null, overlayCSS: { background: '#fff url(' + woocommerce_writepanel_params.plugin_url + '/assets/images/ajax-loader.gif) no-repeat center', opacity: 0.6 } });
+        $('#woocommerce-order-totals').block({ message: null, overlayCSS: { background: '#fff url(' + woocommerce_admin_meta_boxes.plugin_url + '/assets/images/ajax-loader.gif) no-repeat center', opacity: 0.6 } });
 
-        var answer = confirm(woocommerce_writepanel_params.calc_totals);
+        var answer = confirm(woocommerce_admin_meta_boxes.calc_totals);
 
         if (answer) {
 
@@ -43,7 +41,7 @@ jQuery( document ).ready( function( $ ) {
                 line_subtotal_taxes = line_subtotal_taxes + line_subtotal_tax;
                 line_totals = line_totals + line_total;
 
-                if ( woocommerce_writepanel_params.round_at_subtotal=='no' ) {
+                if ( woocommerce_admin_meta_boxes.round_at_subtotal=='no' ) {
                     line_tax = accounting.toFixed( line_tax, 2 );
                 }
 
@@ -51,7 +49,7 @@ jQuery( document ).ready( function( $ ) {
             });
 
             // Tax
-            if (woocommerce_writepanel_params.round_at_subtotal=='yes') {
+            if (woocommerce_admin_meta_boxes.round_at_subtotal=='yes') {
                 cart_tax = accounting.toFixed( cart_tax, 2 );
             }
 
@@ -69,7 +67,7 @@ jQuery( document ).ready( function( $ ) {
 
                 line_totals = line_totals + line_total;
 
-                if ( woocommerce_writepanel_params.round_at_subtotal=='no' ) {
+                if ( woocommerce_admin_meta_boxes.round_at_subtotal=='no' ) {
                     line_tax = accounting.toFixed( line_tax, 2 );
                 }
 
@@ -77,7 +75,7 @@ jQuery( document ).ready( function( $ ) {
             });
 
             // Tax
-            if (woocommerce_writepanel_params.round_at_subtotal=='yes') {
+            if (woocommerce_admin_meta_boxes.round_at_subtotal=='yes') {
                 cart_tax = parseFloat( accounting.toFixed( cart_tax, 2 ) );
             }
 

@@ -1,80 +1,67 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce Payment Gateway Extra Charges\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-09 17:28+0100\n"
-"PO-Revision-Date: 2014-06-09 17:29+0100\n"
+"Project-Id-Version: WooCommerce Payment Gateways Extra Charge\n"
+"POT-Creation-Date: 2014-06-09 17:27+0100\n"
+"PO-Revision-Date: 2014-06-09 17:27+0100\n"
 "Last-Translator: Nicola Mustone <mustone.nicola@gmail.com>\n"
 "Language-Team: Nicola Mustone <mustone.nicola@gmail.com>\n"
-"Language: it_IT\n"
+"Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Poedit 1.6.5\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;"
-"_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2\n"
 "X-Poedit-Basepath: ../\n"
-"X-Textdomain-Support: yes\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c\n"
 "X-Poedit-SearchPath-0: .\n"
 
-# @ wc_pgec
 #: classes/class.wc-pgec.php:142
 msgid "Extra charge for this payment method"
-msgstr "Supplemento per questo metodo di pagamento"
+msgstr ""
 
-# @ wc_pgec
 #: classes/class.wc-pgec.php:143
 msgid ""
 "Optionally add extra charge fixed/percentage amount to this payment method."
 msgstr ""
-"Aggiungi opzionalmente dei supplementi fissi/in percentuale a questo metodo "
-"di pagamento."
 
-# @ wc_pgec
 #: classes/class.wc-pgec.php:147 classes/class.wc-pgec.php:150
 msgid "Extra charge amount"
-msgstr "Ammontare supplemento"
+msgstr ""
 
-# @ wc_pgec
 #: classes/class.wc-pgec.php:156 classes/class.wc-pgec.php:159
 msgid "Extra charge type"
-msgstr "Tipo supplemento"
+msgstr ""
 
-# @ wc_pgec
 #: classes/class.wc-pgec.php:161
 msgid "Fixed amount"
-msgstr "Fisso"
+msgstr ""
 
-# @ wc_pgec
 #: classes/class.wc-pgec.php:162
 msgid "Percentage amount"
-msgstr "Percentuale"
+msgstr ""
 
 #: classes/class.wc-pgec.php:168 classes/class.wc-pgec.php:171
 msgid "Maximum cart value for adding fee:"
-msgstr "Valore massimo del carrello a cui applicare la tassa>"
+msgstr ""
 
 #: classes/class.wc-pgec.php:240
 #, php-format
 msgctxt "%s is the payment gateway choosen"
 msgid "%s fee"
-msgstr "Tassa %s"
+msgstr ""
 
-# @ wc_pgec
 #: classes/class.wc-pgec.php:243
 #, php-format
 msgctxt "value of the fees in order review ( ie: 10,50€ (5%) )"
 msgid "%1$s (%2$.2f&#37;)"
-msgstr "%1$s (%2$.2f&#37;)"
+msgstr ""
 
 #: classes/class.wc-pgec.php:265 classes/class.wc-pgec.php:268
 #: classes/class.wc-pgec.php:287
 msgid "Payment method fee"
-msgstr "Tassa del metodo di pagamento"
+msgstr ""
 
-# @ wc_pgec
 #: woocommerce-payment-gateway-extra-charges.php:53
 msgid "Donate"
-msgstr "Fai una donazione"
+msgstr ""
